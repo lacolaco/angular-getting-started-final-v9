@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-
-import { products } from '../products';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-product-list',
@@ -8,7 +7,8 @@ import { products } from '../products';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent {
-  products = products;
+  constructor(private firestore: AngularFirestore) {}
+  products = this.firestore.collection('products').valueChanges();
 
   share() {
     window.alert('The product has been shared!');
@@ -18,7 +18,6 @@ export class ProductListComponent {
     window.alert('You will be notified when the product goes on sale');
   }
 }
-
 
 /*
 Copyright Google LLC. All Rights Reserved.

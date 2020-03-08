@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { map, switchMap } from 'rxjs/operators';
 
-import { products } from '../products';
 import { CartService } from '../cart.service';
 
 @Component({
@@ -10,25 +11,31 @@ import { CartService } from '../cart.service';
   styleUrls: ['./product-details.component.css']
 })
 export class ProductDetailsComponent implements OnInit {
-  product;
-
   constructor(
     private route: ActivatedRoute,
-    private cartService: CartService
-  ) { }
+    private cartService: CartService,
+    private firestore: AngularFirestore
+  ) {}
 
-  ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      this.product = products[+params.get('productId')];
-    });
-  }
+  product = this.route.paramMap.pipe(
+    map(params => parseInt(params.get('productId'), 10)),
+    switchMap(productId =>
+      this.firestore
+        .collection('products', ref => {
+          return ref.where('id', '==', productId).limit(1);
+        })
+        .valueChanges()
+    ),
+    map(match => match[0])
+  );
+
+  ngOnInit() {}
 
   addToCart(product) {
     this.cartService.addToCart(product);
     window.alert('Your product has been added to the cart!');
   }
 }
-
 
 /*
 Copyright Google LLC. All Rights Reserved.

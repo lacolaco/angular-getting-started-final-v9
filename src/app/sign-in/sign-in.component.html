@@ -1,0 +1,10 @@
+<div *ngIf="user | async as u; else showSignIn">
+  Logged in
+  {{ u.displayName }}
+
+  <a routerLink="/cart">Go to cart</a>
+</div>
+
+<ng-template #showSignIn>
+  <button (click)="signIn()">Sign in with Google</button>
+</ng-template>

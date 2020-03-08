@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-top-bar',
@@ -6,9 +8,16 @@ import { Component } from '@angular/core';
   styleUrls: ['./top-bar.component.css']
 })
 export class TopBarComponent {
+  constructor(private auth: AngularFireAuth, private router: Router) {}
 
+  user = this.auth.user;
+
+  signOut() {
+    this.auth.signOut().then(() => {
+      this.router.navigateByUrl('/');
+    });
+  }
 }
-
 
 /*
 Copyright Google LLC. All Rights Reserved.

@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "angularfirebase-e031e": {
+      "hosting": {
+        "app": [
+          "angularfirebase-e031e"
+        ]
+      }
+    }
+  }
+}

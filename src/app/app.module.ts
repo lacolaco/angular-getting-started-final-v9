@@ -3,6 +3,20 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import 'firebase/firestore';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import {
+  AngularFireAuthGuardModule,
+  canActivate,
+  redirectLoggedInTo,
+  redirectUnauthorizedTo
+} from '@angular/fire/auth-guard';
+import {
+  AngularFireRemoteConfigModule,
+  SETTINGS
+} from '@angular/fire/remote-config';
 
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
@@ -11,7 +25,9 @@ import { ProductAlertsComponent } from './product-alerts/product-alerts.componen
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { CartComponent } from './cart/cart.component';
 import { ShippingComponent } from './shipping/shipping.component';
-
+import { environment } from 'src/environments/environment';
+import { SignInComponent } from './sign-in/sign-in.component';
+import { PromotionMessageComponent } from './promotion-message/promotion-message.component';
 
 @NgModule({
   imports: [
@@ -21,9 +37,29 @@ import { ShippingComponent } from './shipping/shipping.component';
     RouterModule.forRoot([
       { path: '', component: ProductListComponent },
       { path: 'products/:productId', component: ProductDetailsComponent },
-      { path: 'cart', component: CartComponent },
+      {
+        path: 'cart',
+        component: CartComponent,
+        ...canActivate(() => redirectUnauthorizedTo(['/sign-in']))
+      },
       { path: 'shipping', component: ShippingComponent },
-    ])
+      {
+        path: 'sign-in',
+        component: SignInComponent,
+        ...canActivate(() => redirectLoggedInTo(['/']))
+      }
+    ]),
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFirestoreModule,
+    AngularFireAuthModule,
+    AngularFireAuthGuardModule,
+    AngularFireRemoteConfigModule
+  ],
+  providers: [
+    {
+      provide: SETTINGS,
+      useValue: { minimumFetchIntervalMillis: 10_000 }
+    }
   ],
   declarations: [
     AppComponent,
@@ -32,14 +68,13 @@ import { ShippingComponent } from './shipping/shipping.component';
     ProductAlertsComponent,
     ProductDetailsComponent,
     CartComponent,
-    ShippingComponent
+    ShippingComponent,
+    SignInComponent,
+    PromotionMessageComponent
   ],
-  bootstrap: [
-    AppComponent
-  ]
+  bootstrap: [AppComponent]
 })
-export class AppModule { }
-
+export class AppModule {}
 
 /*
 Copyright Google LLC. All Rights Reserved.

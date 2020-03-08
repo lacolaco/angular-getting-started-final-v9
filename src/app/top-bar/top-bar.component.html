@@ -2,10 +2,15 @@
   <h1>My Store</h1>
 </a>
 
-<a [routerLink]="['/cart']" class="button fancy-button">
-  <i class="material-icons">shopping_cart</i>Checkout
-</a>
+<div>
+  <a [routerLink]="['/cart']" class="button fancy-button">
+    <i class="material-icons">shopping_cart</i>Checkout
+  </a>
 
+  <button *ngIf="user | async" (click)="signOut()" class="button fancy-button">
+    <i class="material-icons">person</i>Sign out
+  </button>
+</div>
 
 <!-- 
 Copyright Google LLC. All Rights Reserved.
